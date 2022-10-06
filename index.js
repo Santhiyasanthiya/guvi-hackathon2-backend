@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const mongodb = require("mongodb");
 const mongoClient = mongodb.MongoClient;
-const dotenv = require("dotenv").config();
+const dotenv = require("dotenv").config;
 const cors = require("cors");
 var nodemailer = require("nodemailer");
 
@@ -14,7 +14,7 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(
   cors({
-    origin: "*"
+    origin: "*",
   })
 );
 
