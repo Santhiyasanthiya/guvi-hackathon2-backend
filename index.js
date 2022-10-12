@@ -2,11 +2,11 @@ const express = require("express");
 const app = express();
 const mongodb = require("mongodb");
 const mongoClient = mongodb.MongoClient;
-const dotenv = require("dotenv").config;
+const dotenv = require("dotenv").config();
 const cors = require("cors");
 var nodemailer = require("nodemailer");
 
-const URL =process.env.DB;
+const URL = process.env.DB;
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,15 +15,18 @@ app.use(express.json());
 app.use(
   cors({
     origin: "*",
+    credentials:true
   })
 );
-
+app.get("/", (req, res) =>
+  res.send(`Server Running`)
+);
 let authenticate = function (request, response, next) {
   // console.log(request.headers);
   if (request.headers.authorization) {
     let verify = jwt.verify(
       request.headers.authorization,
-      process.env.SECRET 
+      process.env.SECRET
     );
     console.log(verify);
     if (verify) {
@@ -47,7 +50,7 @@ let authenticateUser = function (request, response, next) {
   if (request.headers.authorization) {
     let verify = jwt.verify(
       request.headers.authorization,
-      process.env.SECRET 
+      process.env.SECRET
     );
     console.log(verify);
     if (verify) {
@@ -76,7 +79,7 @@ let authenticateAdmin = function (request, response, next) {
   if (request.headers.authorization) {
     let verify = jwt.verify(
       request.headers.authorization,
-      process.env.SECRET 
+      process.env.SECRET
     );
     console.log(verify);
     if (verify) {
@@ -108,7 +111,7 @@ app.post("/register", async function (request, response) {
     const salt = await bcrypt.genSalt(10);
     console.log(salt);
     const hash = await bcrypt.hash(request.body.password, salt);
-    request.body.password = hash;  
+    request.body.password = hash;
     await db.collection("users").insertOne(request.body);
     await connection.close();
     response.json({
@@ -133,7 +136,7 @@ app.post("/", async function (request, response) {
         //Token
         const token = jwt.sign(
           { id: user._id, username: user.username, role: user.role },
-          process.env.SECRET 
+          process.env.SECRET
         );
         // console.log(token);
         response.json({
@@ -196,7 +199,7 @@ app.get("/dashboard", authenticateUser, async function (request, response) {
     const connection = await mongoClient.connect(URL);
     const db = connection.db("bookMyShow");
     let movies = await db.collection("movies").find().toArray();
-   
+
     //   .find({ userid: mongodb.ObjectId(request.userid) })
     //   .toArray();
     await connection.close();
@@ -221,7 +224,7 @@ app.get("/admin-dashboard/:id", authenticateAdmin, async function (req, res) {
     console.log(error);
   }
 });
-app.put("/admin-dashboard/:id",  async function (req, res) {
+app.put("/admin-dashboard/:id", async function (req, res) {
   try {
     const connection = await mongoClient.connect(URL);
     const db = connection.db("bookMyShow");
@@ -236,7 +239,7 @@ app.put("/admin-dashboard/:id",  async function (req, res) {
 });
 app.delete(
   "/admin-dashboard/:id",
-  
+
   async function (req, res) {
     try {
       const connection = await mongoClient.connect(URL);
@@ -263,10 +266,10 @@ app.post(
         service: "gmail",
         auth: {
           user: "testnodemail04@gmail.com",
-          pass:  process.env.pass,
+          pass: process.env.pass,
         },
       });
-console.log(request.params.movie , request.params.selected , request.params.totalprice)
+      console.log(request.params.movie, request.params.selected, request.params.totalprice)
       var mailOptions = {
         from: "testnodemail04@gmail.com",
         to: mailid,
@@ -279,12 +282,12 @@ console.log(request.params.movie , request.params.selected , request.params.tota
         if (error) {
           console.log(error);
           response.json({
-            message:'Email not send'
+            message: 'Email not send'
           })
         } else {
           console.log("Email sent: " + info.response);
           response.json({
-            message:'Email Send'
+            message: 'Email Send'
           })
         }
       });
