@@ -139,7 +139,7 @@ app.post("/", async function (request, response) {
           process.env.SECRET
         );
         // console.log(token);
-        response.json({
+        response.json({ 
           message: "Successfully Logged In!!",
           token,
         });
